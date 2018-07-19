@@ -1,0 +1,72 @@
+; 以下を参考
+; http://forums.nesdev.com/viewtopic.php?t=4440&highlight=nullsleep
+
+    .inesprg 1      ; 1x 16KB PRG code 
+    .ineschr 0      ; 1x  8KB CHR data 
+    .inesmap 0      ; mapper 0 = NROM, no bank swapping 
+    .inesmir 0      ; background mirroring 
+    .bank 1 
+    .org $A000 
+
+RESET: 
+   cld             ; clear decimal flag 
+   sei             ; disable interrupts 
+   lda #%00000000  ; disable vblank interrupts by clearing 
+   sta $2000       ; the most significant bit of $2000 
+    
+   ; Second issue was here: proper memory initialization 
+   sta $2001       ; 
+
+   ; Now clear the ram 
+   ldx #0 
+    
+clrmem: 
+   sta $000,x ; Zero page 
+   sta $100,x ; stack 
+   sta $200,x ; Ram 
+   sta $300,x 
+   sta $400,x 
+   sta $500,x 
+   sta $600,x 
+   sta $700,x ; Remove this if you're storing reset-persistent data 
+    
+   inx 
+   bne clrmem 
+    
+    ldx #$FF       ; set stack 
+   txs    
+    
+WaitV1:    
+   lda $2002       ; give the PPU a little time to initialize 
+   bpl WaitV1      ; by waiting for a vblank 
+WaitV2:    
+   lda $2002       ; wait for a second vblank to be safe 
+   bpl WaitV2      ; and now the PPU should be initialized 
+
+    
+   lda #%00001111  ; enable all sound channels except 
+   sta $4015       ; the delta modulation channel 
+
+   lda #$00        ; replace dashes with song number 
+   ldx #$01        ; replace with $00 for NTSC or $01 for PAL 
+   jsr %%__INIT_ADDR__%% ; replace dashes with init address 
+
+   lda #%10000000  ; enable vblank interrupts by setting the 
+   sta $2000       ; most significant bit of $2000 
+
+   Forever: 
+   JMP Forever     ; jump back to Forever, infinite loop 
+
+NMI_Routine: 
+   jsr %%__PLAY_ADDR__%% ; replace dashes with play address 
+   rti             ; return from interrupt routine 
+
+   .bank 0 
+
+   .org %%__LOAD_ADDR__%%
+   .incbin "%%__NSF_FILE__%%" ;without header raw file!
+
+   .org $FFFA 
+   .dw NMI_Routine 
+   .dw RESET 
+   .dw 0 
