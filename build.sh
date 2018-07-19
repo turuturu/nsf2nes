@@ -11,6 +11,10 @@ TMP_FILE=".tmpasm"
 NSF_FILE=$1
 OUTPUT_FILE=$2
 
+meta_info=`python3 nsfmeta.py $NSF_FILE`
+LOAD_ADDR=`echo $meta_info| cut -d' ' -f1`
+INIT_ADDR=`echo $meta_info| cut -d' ' -f2`
+PLAY_ADDR=`echo $meta_info| cut -d' ' -f3`
 echo "REMOVE HEADER"
 HEADER_REMOVED_FILE=${NSF_FILE}.noheader
 tail -c +129 ${NSF_FILE} > ${HEADER_REMOVED_FILE}

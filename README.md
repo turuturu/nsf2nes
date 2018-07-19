@@ -7,3 +7,4 @@
 You will need:
 
 - nesasm
+- Python3
