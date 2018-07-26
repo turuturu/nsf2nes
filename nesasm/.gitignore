@@ -1,0 +1,6 @@
+.tmpasm
+.fns
+*.noheader
+*.nes
+*.nsf
+
