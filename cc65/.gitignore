@@ -1,6 +1,5 @@
 tmp.asm
 tmp.cfg
 *.o
-*.nes
 *.nsf
 *.noheader

@@ -8,7 +8,7 @@
 	.byte	$4E, $45, $53, $1A	; "NES" Header
 	.byte	$02			; PRG-BANKS
 	.byte	$01			; CHR-BANKS
-	.byte	$00			; 0:Horizontal/1:Vertical/3:Vertical & WRAM Mirror
+	.byte	$30			; 0:Horizontal/1:Vertical/3:Vertical & WRAM Mirror
 	.byte	$00			; 
 	.byte	$00, $00, $00, $00	; 
 	.byte	$00, $00, $00, $00	; 
@@ -30,12 +30,12 @@
 clrmem: 
    sta $000,x ; Zero page 
    sta $100,x ; stack 
-   sta $200,x ; Ram 
+   ;sta $200,x ; Ram 
    sta $300,x 
    sta $400,x 
    sta $500,x 
    sta $600,x 
-   sta $700,x ; Remove this if you're storing reset-persistent data 
+   ;sta $700,x ; Remove this if you're storing reset-persistent data 
    inx 
    bne clrmem 
    ldx #$FF       ; set stack 
@@ -50,11 +50,16 @@ WaitV2:
    lda #%00001111  ; enable all sound channels except 
    sta $4015       ; the delta modulation channel 
 
-   lda #$00        ; replace dashes with song number 
+   jsr _NesReset
+   ;lda #$00        ; replace dashes with song number 
+   ;adc #$1
+   lda $200        ; replace dashes with song number 
+   ;adc #$1
+   ;sta $200        ; replace dashes with song number 
    ldx #$00        ; replace with $00 for NTSC or $01 for PAL 
    jsr $%%__INIT_ADDR__%%;
 
-   lda #%10000000  ; enable vblank interrupts by setting the 
+   ;lda #%10000000  ; enable vblank interrupts by setting the 
    sta $2000       ; most significant bit of $2000 
 
 	 ; stack setting
@@ -77,5 +82,7 @@ WaitV2:
 	.word	$0000
 
 .segment "CHARS"
-	.incbin	"character.chr"
+	.incbin	"character_moji.chr"
 	
+;.segment "CHARS2"
+;.incbin	"character.chr"

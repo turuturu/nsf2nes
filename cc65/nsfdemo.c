@@ -45,11 +45,21 @@ void Render()
   DrawString( 7, 17,"POWERED BY TURUTURU", 19);
 }
 
+int tmpint;
 //NMI割り込み
 void NMIProc(void){
+
+  if(tmpint == 0){
+    *(char*)0x8000 = 1;
+    tmpint = 1;
+  }else{
+    *(char*)0x8000 = 2;
+    tmpint = 0;
+  }
 }
 // メイン処理
 void NesMain(){
+  tmpint = 0;
   const char palettebg[] = {
       0x1f, 0x21, 0x30, 0x30, //kuro ao usuao shiro
       0x1f, 0x21, 0x30, 0x30, //kuro ao usuao shiro
@@ -68,7 +78,7 @@ void NesMain(){
   SetPalette((char *)palettesp,1);
 	//ClearScreen();
 
-  Render();
+  //Render();
 	ShowScreen(1);
   while (1) {
     //CheckPad();

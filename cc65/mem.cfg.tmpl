@@ -3,6 +3,7 @@ MEMORY {
 	PRG:      start = $8000, size = $7ffa, type = ro, fill = yes;
 	ROMINFO:	start = $fffa, size = $0006, type = ro, file = %O, define = yes;
 	ROMCHR:		start = $0000, size = $2000, type = rw, define = yes;
+	#ROMCHR2:	start = $0000, size = $2000, type = rw, define = yes;
 	ZP:		    start = $0000, size = $0020, type = rw, define = yes;
 
 	RAM:		  start = $0400, size = $0300, type = rw, define = yes;
@@ -21,6 +22,7 @@ SEGMENTS {
 	RODATA:		 load = PRG,		type = ro,	define = yes;
 	VECINFO:	 load = ROMINFO, type = ro,   start = $FFFA;
 	CHARS:	 	load = ROMCHR,		type = ro;
+	#CHARS2:	 	load = ROMCHR2,		type = ro;
 }
 
 FEATURES {
